@@ -1,4 +1,4 @@
-package com.project.Ecommerce.Security;
+package com.project.Ecommerce.Security.Jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
