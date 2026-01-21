@@ -9,7 +9,8 @@ import com.project.Ecommerce.Entity.Product;
 
 public interface ProductRepository extends JpaRepository<Product,Long> {
 
-    Page<Product> findBYCategoryOrderByPriceAsc(Category category, Pageable pageDetails);
+    Page<Product> findByCategoryOrderByPriceAsc(Category category, Pageable pageDetails);
+     //Page<Product> findByCategory(Category category, Pageable pageable);
 
     Page<Product> findByProductNameLikeIgnoreCase(String string, Pageable pageDetails);
 

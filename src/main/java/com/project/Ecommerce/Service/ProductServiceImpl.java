@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-
+import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +22,7 @@ import com.project.Ecommerce.Repository.ProductRepository;
 import com.project.Ecommerce.exceptions.APIException;
 import com.project.Ecommerce.exceptions.ResourceNotFoundException;
 
+@Service
 public class ProductServiceImpl implements ProductService {
 
     @Autowired
@@ -106,7 +107,7 @@ public class ProductServiceImpl implements ProductService {
                 ? Sort.by(sortBy)
                 : Sort.by(sortBy);
         Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
-        Page<Product> pageProducts = productRepository.findBYCategoryOrderByPriceAsc(category, pageDetails);
+        Page<Product> pageProducts = productRepository.findByCategoryOrderByPriceAsc(category, pageDetails);
 
         List<Product> products = pageProducts.getContent();
 

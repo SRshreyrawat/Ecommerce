@@ -79,7 +79,7 @@ public class ProductController {
 
     }
 
-    @PutExchange("/admin/products/{productId}")
+    @PutMapping("/admin/products/{productId}")
     public ResponseEntity<ProductDTO> updateProduct(@Valid @RequestBody ProductDTO productDTO,
             @PathVariable Long productId) {
 
