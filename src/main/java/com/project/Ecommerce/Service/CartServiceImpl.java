@@ -19,6 +19,8 @@ import com.project.Ecommerce.Util.AuthUtil;
 import com.project.Ecommerce.exceptions.APIException;
 import com.project.Ecommerce.exceptions.ResourceNotFoundException;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class CartServiceImpl implements CartService {
 
@@ -144,5 +146,53 @@ public class CartServiceImpl implements CartService {
         cartDTO.setProducts(products);
         return cartDTO;
     }
+
+    @Transactional
+    @Override
+    public CartDTO updateProductQuantityInCart(Long productId, Integer quantity) {
+        String emailId = authUtil.loggedInEmail();
+        Cart userCart = cartRepository.findCartByEmail(emailId);
+        Long cartId = userCart.getId();
+        Cart cart = cartRepository.findById(cartId)
+        .orElseThrow(() -> new  ResourceNotFoundException("cart","cartId",cartId));
+
+        Product product = productRepository.findById(productId)
+        .orElseThrow(() -> new ResourceNotFoundException("Product", "ProductId", productId));
+
+
+        if (product.getQuantity() == 0) {
+            throw new APIException(product.getProductName() + " is not available.");
+        }
+        if (product.getQuantity() < quantity) {
+            throw new APIException("Please,make an order of the " + product.getProductName()
+                    + " less then or equal to the quantity " + product.getQuantity() + ".");
+        }
+        CartItem cartItem = cartItemRepository.findCartItemByProductIdAndCartId(cartId, productId);
+        if(cartItem==null){
+            throw new APIException("Product " + product.getProductName() + " not exist");
+        }
+        cartItem.setProductPrice(product.getSpecialPrice());
+        cartItem.setQuantity(cartItem.getQuantity()+quantity);
+        cartItem.setDiscount(product.getDiscount());
+        cart.setTotalPrice(cart.getTotalPrice()+(cartItem.getProductPrice()*quantity));
+
+        cartRepository.save(cart);
+        CartItem updatedCartItem = cartItemRepository.save(cartItem);
+        if(updatedCartItem.getQuantity() == 0){
+            cartItemRepository.deleteById(updatedCartItem.getId());
+        }
+        CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
+        List<CartItem> cartItems = cart.getCartItem();
+        Stream<ProductDTO> productStream = cartItems.stream()
+        .map(item -> {
+            ProductDTO prd = modelMapper.map(item.getProduct(),ProductDTO.class);
+            prd.setQuantity(item.getQuantity());
+            return prd;
+        });
+        cartDTO.setProducts(productStream.toList());
+        return cartDTO;
+    }
+
+
 
 }

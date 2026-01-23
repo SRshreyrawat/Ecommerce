@@ -1,9 +1,13 @@
 package com.project.Ecommerce.Repository;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import com.project.Ecommerce.Entity.Cart;
 import com.project.Ecommerce.Entity.CartItem;
+import com.project.Ecommerce.Entity.Product;
 
 public interface CartItemRepository extends JpaRepository<CartItem,Long> {
 
@@ -11,5 +15,7 @@ public interface CartItemRepository extends JpaRepository<CartItem,Long> {
     CartItem findCartItemByProductIdAndCartId(Long id, Long productId);
 
     CartItem save(CartItem newCartItem);
+
+    Optional<Product> findByCartAndProduct(Cart cart, Product product);
     
 }

@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.project.Ecommerce.Dto.CartDTO;
 
+import jakarta.transaction.Transactional;
+
 public interface CartService {
 
     CartDTO addProductToCart(Long productId, Integer quantity);
@@ -11,5 +13,8 @@ public interface CartService {
     List<CartDTO> getAllCarts();
 
     CartDTO getCart(String emailId, Long cartId);
+
+    @Transactional
+    CartDTO updateProductQuantityInCart(Long productId, Integer quantity);
     
 }
