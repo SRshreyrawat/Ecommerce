@@ -1,5 +1,7 @@
 package com.project.Ecommerce.Controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,5 +27,11 @@ public class CartController {
         return new ResponseEntity<>(cartDTO, HttpStatus.CREATED);
     }
 
-    
+    @GetMapping("/carts")
+    public ResponseEntity<List<CartDTO>> getCarts(){
+
+        List<CartDTO> cartDTOs = cartService.getAllCarts();
+        return new ResponseEntity<List<CartDTO>>(cartDTOs,HttpStatus.FOUND);
+        
+    }
 }
