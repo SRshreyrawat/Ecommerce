@@ -18,4 +18,6 @@ public interface CartItemRepository extends JpaRepository<CartItem,Long> {
 
     Optional<Product> findByCartAndProduct(Cart cart, Product product);
     
+    @Query("DELETE FROM CartItem ci WHERE ci.cart.id =?1 AND ci.product.id=?2")
+    void deleteCartItemByProductIdAndCartId(Long cartId, Long productId);
 }

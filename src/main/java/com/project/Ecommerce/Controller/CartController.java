@@ -73,7 +73,7 @@ public class CartController {
 
                 String status = cartService.deleteProductFromCart(cartId,productId);
 
-        return new ResponseEntity<String>(status,HttpStatus.ok);
+        return new ResponseEntity<String>(status,HttpStatus.OK);
     }
 
 }
