@@ -13,10 +13,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.project.Ecommerce.Dto.CartDTO;
 import com.project.Ecommerce.Dto.ProductDTO;
 import com.project.Ecommerce.Dto.ProductResponse;
+import com.project.Ecommerce.Entity.Cart;
 import com.project.Ecommerce.Entity.Category;
 import com.project.Ecommerce.Entity.Product;
+import com.project.Ecommerce.Repository.CartRepository;
 import com.project.Ecommerce.Repository.CategoryRepository;
 import com.project.Ecommerce.Repository.ProductRepository;
 import com.project.Ecommerce.exceptions.APIException;
@@ -36,6 +39,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private FileService fileService;
+    @Autowired
+    CartRepository cartRepository;
+    @Autowired
+    CartService cartService;
 
     @Value("${project.image}")
     private String path;
@@ -160,26 +167,39 @@ public class ProductServiceImpl implements ProductService {
         return productResponse;
     }
 
-    @Override
-    public ProductDTO updateProduct(ProductDTO productDTO, Long productId) {
+@Override
+public ProductDTO updateProduct(ProductDTO productDTO, Long productId) {
 
+    Product productFromDb = productRepository.findById(productId)
+            .orElseThrow(() ->
+                    new ResourceNotFoundException("Product", "productId", productId));
 
-                Product productFromDb = productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
+    Product product = modelMapper.map(productDTO, Product.class);
 
-        Product product = modelMapper.map(productDTO, Product.class);
+    productFromDb.setProductName(product.getProductName());
+    productFromDb.setDescription(product.getDescription());
+    productFromDb.setQuantity(product.getQuantity());
+    productFromDb.setDiscount(product.getDiscount());
+    productFromDb.setPrice(product.getPrice());
+    productFromDb.setSpecialPrice(product.getSpecialPrice());
 
-        productFromDb.setProductName(product.getProductName());
-        productFromDb.setDescription(product.getDescription());
-        productFromDb.setQuantity(product.getQuantity());
-        productFromDb.setDiscount(product.getDiscount());
-        productFromDb.setPrice(product.getPrice());
-        productFromDb.setSpecialPrice(product.getSpecialPrice());
+    Product savedProduct = productRepository.save(productFromDb);
 
-        Product savedProduct = productRepository.save(productFromDb);
+    List<Cart> carts = cartRepository.findCartByProductId(productId);
 
-        return modelMapper.map(savedProduct, ProductDTO.class);
-    }
+    List<CartDTO> cartDTOs = carts.stream().map(cart -> {
+        CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
+        List<ProductDTO> products = cart.getCartItem().stream()
+                .map(p -> modelMapper.map(p.getProduct(), ProductDTO.class))
+                .toList();
+        cartDTO.setProducts(products);
+        return cartDTO;
+    }).toList();
+    cartDTOs.forEach(cart -> cartService.updateProductInCarts(cart.getCartId()));
+
+    return modelMapper.map(savedProduct, ProductDTO.class);
+}
+
 
     @Override
     public ProductDTO deleteProduct(Long productId) {

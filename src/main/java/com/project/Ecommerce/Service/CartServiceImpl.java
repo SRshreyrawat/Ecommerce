@@ -217,4 +217,9 @@ public class CartServiceImpl implements CartService {
         return "Product " + cartItem.getProduct().getProductName() + " removed from the cart ";
     }
 
+    @Override
+    public Object updateProductInCarts(Long cartId) {
+       
+    }
+
 }
