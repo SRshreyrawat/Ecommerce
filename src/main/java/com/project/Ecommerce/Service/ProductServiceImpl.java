@@ -195,7 +195,7 @@ public ProductDTO updateProduct(ProductDTO productDTO, Long productId) {
         cartDTO.setProducts(products);
         return cartDTO;
     }).toList();
-    cartDTOs.forEach(cart -> cartService.updateProductInCarts(cart.getCartId()));
+    cartDTOs.forEach(cart -> cartService.updateProductInCarts(cart.getCartId(),productId));
 
     return modelMapper.map(savedProduct, ProductDTO.class);
 }
@@ -205,7 +205,11 @@ public ProductDTO updateProduct(ProductDTO productDTO, Long productId) {
     public ProductDTO deleteProduct(Long productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
-        productRepository.delete(product);
+        List<Cart> carts =cartRepository.findCartByProductId(productId);
+        carts.forEach(cart -> cartService.deleteProductFromCart(cart.getId(),productId));
+        
+        
+                productRepository.delete(product);
         return modelMapper.map(product, ProductDTO.class);
 
     }

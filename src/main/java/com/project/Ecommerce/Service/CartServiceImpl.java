@@ -2,11 +2,9 @@ package com.project.Ecommerce.Service;
 
 import java.util.List;
 import java.util.stream.Stream;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.project.Ecommerce.Dto.CartDTO;
 import com.project.Ecommerce.Dto.ProductDTO;
 import com.project.Ecommerce.Entity.Cart;
@@ -218,8 +216,24 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Object updateProductInCarts(Long cartId) {
-       
+    public void updateProductInCarts(Long cartId ,Long productId) {
+         Cart cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new ResourceNotFoundException("cart", "cartId", cartId));
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "ProductId", productId));
+       CartItem cartItem = cartItemRepository.findCartItemByProductIdAndCartId(cartId, productId);
+       if (cartItem==null) {
+        throw new APIException("Product " + product.getProductName() + " not available ");
+
+       }
+       double cartPrice = cart.getTotalPrice()-(cartItem.getProductPrice()*cartItem.getQuantity());
+
+       cartItem.setProductPrice(product.getSpecialPrice());
+       cart.setTotalPrice(cartPrice + (cartItem.getProductPrice()*cartItem.getQuantity()) ) ;
+
+       cartItem = cartItemRepository.save(cartItem);
+
     }
 
 }

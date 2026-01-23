@@ -35,4 +35,6 @@ public class Cart {
     private List<CartItem> cartItem = new ArrayList<>();
 
     private Double totalPrice = 0.0;
+
+   
 }
