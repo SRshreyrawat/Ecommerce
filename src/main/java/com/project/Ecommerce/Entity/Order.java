@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 
@@ -46,9 +47,9 @@ public class Order {
 
     private double totalAmount;
 
-    // @OneToOne
-    // @JoinColumn(name="payment_id")
-    // private Payment Payment;
+    @OneToOne
+    @JoinColumn(name="payment_id")
+    private Payment Payment;
 
     private String orderStatus;
 
