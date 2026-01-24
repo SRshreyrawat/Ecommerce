@@ -32,7 +32,7 @@ public class Cart {
     private User user;
 
     @OneToMany(mappedBy = "cart",cascade = {CascadeType.PERSIST,CascadeType.MERGE})
-    private List<CartItem> cartItem = new ArrayList<>();
+    private List<CartItem> cartItems = new ArrayList<>();
 
     private Double totalPrice = 0.0;
 

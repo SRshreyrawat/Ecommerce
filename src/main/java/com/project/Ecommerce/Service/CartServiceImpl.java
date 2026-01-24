@@ -81,7 +81,7 @@ public class CartServiceImpl implements CartService {
         cartRepository.save(cart);
         CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
 
-        List<CartItem> cartItems = cart.getCartItem();
+        List<CartItem> cartItems = cart.getCartItems();
 
         Stream<ProductDTO> productDTOStream = cartItems.stream().map(item -> {
             ProductDTO map = modelMapper.map(item.getProduct(), ProductDTO.class);
@@ -117,8 +117,8 @@ public class CartServiceImpl implements CartService {
         }
         List<CartDTO> cartDTOs = carts.stream().map(cart -> {
             CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
-            cart.getCartItem().forEach(c -> c.getProduct().setQuantity(c.getQuantity()));
-            List<ProductDTO> products = cart.getCartItem().stream()
+            cart.getCartItems().forEach(c -> c.getProduct().setQuantity(c.getQuantity()));
+            List<ProductDTO> products = cart.getCartItems().stream()
                     .map(p -> modelMapper.map(p.getProduct(), ProductDTO.class))
                     .toList();
             cartDTO.setProducts(products);
@@ -138,7 +138,7 @@ public class CartServiceImpl implements CartService {
         }
 
         CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
-        List<ProductDTO> products = cart.getCartItem().stream()
+        List<ProductDTO> products = cart.getCartItems().stream()
                 .map(p -> modelMapper.map(p.getProduct(), ProductDTO.class))
                 .toList();
         cartDTO.setProducts(products);
@@ -188,7 +188,7 @@ public class CartServiceImpl implements CartService {
             cartItemRepository.deleteById(updatedCartItem.getId());
         }
         CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
-        List<CartItem> cartItems = cart.getCartItem();
+        List<CartItem> cartItems = cart.getCartItems();
         Stream<ProductDTO> productStream = cartItems.stream()
                 .map(item -> {
                     ProductDTO prd = modelMapper.map(item.getProduct(), ProductDTO.class);

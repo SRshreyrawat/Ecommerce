@@ -189,7 +189,7 @@ public ProductDTO updateProduct(ProductDTO productDTO, Long productId) {
 
     List<CartDTO> cartDTOs = carts.stream().map(cart -> {
         CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
-        List<ProductDTO> products = cart.getCartItem().stream()
+        List<ProductDTO> products = cart.getCartItems().stream()
                 .map(p -> modelMapper.map(p.getProduct(), ProductDTO.class))
                 .toList();
         cartDTO.setProducts(products);
